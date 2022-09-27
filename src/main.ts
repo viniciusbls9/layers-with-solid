@@ -14,7 +14,7 @@ app.post("/transactions", async function (req: Request, res: Response) {
 });
 
 app.get("/transactions:/code", async function (req: Request, res: Response) {
-  const getTransaction = new GetTransaction();
+  const getTransaction = new GetTransaction(transactionRepository);
   const transaction = await getTransaction.execute(req.params.code);
   res.json(transaction);
 });
