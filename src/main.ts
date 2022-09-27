@@ -2,11 +2,13 @@ import express, { Request, Response } from "express";
 import pgp from "pg-promise";
 import CreateTransaction from "./application/CreateTransaction";
 import GetTransaction from "./application/GetTransaction";
+import PostgreSQLAdapter from "./infra/database/PostgreSQLAdapter";
 import TransactionDatabaseRepository from "./infra/TransactionDatabaseRepository";
 
 const app = express();
 app.use(express.json());
-const transactionRepository = new TransactionDatabaseRepository();
+const connection = new PostgreSQLAdapter();
+const transactionRepository = new TransactionDatabaseRepository(connection);
 app.post("/transactions", async function (req: Request, res: Response) {
   const createTransaction = new CreateTransaction(transactionRepository);
   await createTransaction.execute(req.body);
