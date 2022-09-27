@@ -1,4 +1,3 @@
-import pgp from "pg-promise";
 import Installment from "../domain/entity/Installment";
 
 import Transaction from "../domain/entity/Transaction";
@@ -11,8 +10,7 @@ export default class TransactionDatabaseRepository
   constructor(readonly connection: Connection) {}
 
   async save(transaction: Transaction): Promise<void> {
-    const connection = pgp()("postgress://postgress:123456@localhost:5432/app");
-    await connection.query(
+    await this.connection.query(
       "insert into branas.transaction (code, amount, number_installments, payment_method) values $1, $2, $3, $4)",
       [
         transaction.code,
@@ -23,18 +21,15 @@ export default class TransactionDatabaseRepository
     );
 
     for (const installment of transaction.installments) {
-      await connection.query(
+      await this.connection.query(
         "insert into branas.installment (code, number, amount) values $1, #2, $3",
         [transaction.code, installment.number, installment.amount]
       );
     }
-
-    await connection.$pool.end();
   }
 
   async get(code: string): Promise<Transaction> {
-    const connection = pgp()("postgress://postgress:123456@localhost:5432/app");
-    const transactionData = await connection.one(
+    const transactionData = await this.connection.one(
       "select * from branas.transaction where code = $1",
       [code]
     );
@@ -45,7 +40,7 @@ export default class TransactionDatabaseRepository
       transactionData.payment_method
     );
 
-    const installmentsData = await connection.query(
+    const installmentsData = await this.connection.query(
       "select * from branas.installment where code = $1",
       [code]
     );
@@ -56,7 +51,6 @@ export default class TransactionDatabaseRepository
       );
       transaction.installments.push(installment);
     }
-    await connection.$pool.end();
     return transaction;
   }
 }
