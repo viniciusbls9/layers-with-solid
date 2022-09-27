@@ -1,5 +1,3 @@
-import express, { Request, Response } from "express";
-import pgp from "pg-promise";
 import CreateTransaction from "../../application/CreateTransaction";
 import GetTransaction from "../../application/GetTransaction";
 import PostgreSQLAdapter from "../database/PostgreSQLAdapter";
@@ -10,31 +8,26 @@ export default class Router {
   constructor(readonly httpServer: HttpServer) {}
 
   async init() {
+    const connection = new PostgreSQLAdapter();
+    const transactionRepository = new TransactionDatabaseRepository(connection);
+
     this.httpServer.on(
       "post",
       "/transactions",
-      async function (req: Request, res: Response) {
+      async function (params: any, body: any) {
         const createTransaction = new CreateTransaction(transactionRepository);
-        await createTransaction.execute(req.body);
-        res.end();
+        await createTransaction.execute(body);
       }
     );
 
     this.httpServer.on(
       "get",
       "/transactions:/code",
-      async function (req: Request, res: Response) {
+      async function (params: any, body: any) {
         const getTransaction = new GetTransaction(transactionRepository);
-        const transaction = await getTransaction.execute(req.params.code);
-        res.json(transaction);
+        const transaction = await getTransaction.execute(params.code);
+        return transaction;
       }
     );
-
-    const app = express();
-    app.use(express.json());
-    const connection = new PostgreSQLAdapter();
-    const transactionRepository = new TransactionDatabaseRepository(connection);
-
-    app.listen(3000);
   }
 }
