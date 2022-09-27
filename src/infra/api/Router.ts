@@ -2,7 +2,7 @@ import CreateTransaction from "../../application/CreateTransaction";
 import GetTransaction from "../../application/GetTransaction";
 import TransactionRepository from "../../domain/repository/TransactionRepository";
 import PostgreSQLAdapter from "../database/PostgreSQLAdapter";
-import TransactionDatabaseRepository from "../TransactionDatabaseRepository";
+import TransactionDatabaseRepository from "../repository/TransactionDatabaseRepository";
 import HttpServer from "./HttpServer";
 
 export default class Router {

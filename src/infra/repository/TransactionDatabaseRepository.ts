@@ -1,8 +1,8 @@
-import Installment from "../domain/entity/Installment";
+import Installment from "../../domain/entity/Installment";
 
-import Transaction from "../domain/entity/Transaction";
-import TransactionRepository from "../domain/repository/TransactionRepository";
-import Connection from "./database/Connection";
+import Transaction from "../../domain/entity/Transaction";
+import TransactionRepository from "../../domain/repository/TransactionRepository";
+import Connection from "../database/Connection";
 
 export default class TransactionDatabaseRepository
   implements TransactionRepository
